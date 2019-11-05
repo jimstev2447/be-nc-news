@@ -117,6 +117,58 @@ describe('app', () => {
               });
           });
         });
+        describe('POST', () => {
+          it('status:200 returns updated article votes increased by 1', () => {
+            const newVotes = { inc_votes: 1 };
+            return request(app)
+              .patch('/api/articles/1')
+              .send(newVotes)
+              .expect(200)
+              .then(({ body: { article } }) => {
+                expect(article.votes).to.equal(101);
+              });
+          });
+          it('status:200 returns updated article votes increased by 10', () => {
+            const newVotes = { inc_votes: 10 };
+            return request(app)
+              .patch('/api/articles/1')
+              .send(newVotes)
+              .expect(200)
+              .then(({ body: { article } }) => {
+                expect(article.votes).to.equal(110);
+              });
+          });
+          it('status:200 returns updated article votes decreased by 1', () => {
+            const newVotes = { inc_votes: -1 };
+            return request(app)
+              .patch('/api/articles/1')
+              .send(newVotes)
+              .expect(200)
+              .then(({ body: { article } }) => {
+                expect(article.votes).to.equal(99);
+              });
+          });
+          it('status:200 returns updated article votes decreased by 10', () => {
+            const newVotes = { inc_votes: -10 };
+            return request(app)
+              .patch('/api/articles/1')
+              .send(newVotes)
+              .expect(200)
+              .then(({ body: { article } }) => {
+                expect(article.votes).to.equal(90);
+              });
+          });
+          it('status:400 returns bad request when given an invalid inc_votes value', () => {
+            const newVotes = { inc_votes: 'test' };
+            return request(app)
+              .patch('/api/articles/1')
+              .send(newVotes)
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal('bad request');
+              });
+          });
+        });
       });
     });
   });
