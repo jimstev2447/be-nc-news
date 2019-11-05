@@ -1,5 +1,5 @@
 const topicsRouter = require('express').Router();
-const { getAllTopics } = require('../controllers/topics-controller');
+const { getAllTopics } = require('../controllers/topics-controllers');
 const { server405s } = require('../errors');
 
 topicsRouter
