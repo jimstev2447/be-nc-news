@@ -1,4 +1,9 @@
-exports.server500s = (err, res, req, next) => {
+exports.customErrors = (err, req, res, next) => {
+  if (err.msg) res.status(err.status).send({ msg: err.msg });
+  else next(err);
+};
+
+exports.server500s = (err, req, res, next) => {
   console.log(err);
   res.status(500).send({ msg: 'Server Error' });
 };

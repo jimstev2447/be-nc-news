@@ -2,10 +2,11 @@ const express = require('express');
 const app = express();
 app.use(express.json());
 apiRouter = require('./routes/api-router');
-const { server500s, server404s } = require('./errors');
+const { server404s, customErrors, server500s } = require('./errors');
 
 app.use('/api', apiRouter);
 app.use('/*', server404s);
 
+app.use(customErrors);
 app.use(server500s);
 module.exports = app;
