@@ -168,6 +168,16 @@ describe('app', () => {
                 expect(msg).to.equal('bad request');
               });
           });
+          it('status:400 returns bad request when given an invalid votes key', () => {
+            const newVotes = { test: 1 };
+            return request(app)
+              .patch('/api/articles/1')
+              .send(newVotes)
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal('bad request');
+              });
+          });
         });
       });
     });

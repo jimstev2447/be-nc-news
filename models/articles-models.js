@@ -11,10 +11,12 @@ exports.fetchArticleByArticleId = article_id => {
 };
 
 exports.updateArticle = (article_id, votes) => {
+  if (!votes) return Promise.reject({ status: 400, msg: 'bad request' });
+
   return knex
     .from('articles')
     .where({ article_id })
-    .increment('votes', votes.inc_votes)
+    .increment('votes', votes)
     .returning('*')
     .then(([article]) => {
       return article;
