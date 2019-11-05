@@ -83,37 +83,39 @@ describe('app', () => {
     });
     describe('/articles', () => {
       describe('/:article_id', () => {
-        it('status:200 returns with the specified article', () => {
-          return request(app)
-            .get('/api/articles/1')
-            .expect(200)
-            .then(({ body: { article } }) => {
-              expect(article).to.have.keys(
-                'article_id',
-                'title',
-                'topic',
-                'author',
-                'body',
-                'created_at',
-                'votes'
-              );
-            });
-        });
-        it('status:400 returns bad request for invalid article_id', () => {
-          return request(app)
-            .get('/api/articles/invalidReq')
-            .expect(400)
-            .then(({ body: { msg } }) => {
-              expect(msg).to.equal('bad request');
-            });
-        });
-        it('status:404 returns path not found for vaild but non-existent article_id', () => {
-          return request(app)
-            .get('/api/articles/75')
-            .expect(404)
-            .then(({ body: { msg } }) => {
-              expect(msg).to.equal('path not found');
-            });
+        describe('GET', () => {
+          it('status:200 returns with the specified article', () => {
+            return request(app)
+              .get('/api/articles/1')
+              .expect(200)
+              .then(({ body: { article } }) => {
+                expect(article).to.have.keys(
+                  'article_id',
+                  'title',
+                  'topic',
+                  'author',
+                  'body',
+                  'created_at',
+                  'votes'
+                );
+              });
+          });
+          it('status:400 returns bad request for invalid article_id', () => {
+            return request(app)
+              .get('/api/articles/invalidReq')
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal('bad request');
+              });
+          });
+          it('status:404 returns path not found for vaild but non-existent article_id', () => {
+            return request(app)
+              .get('/api/articles/75')
+              .expect(404)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal('path not found');
+              });
+          });
         });
       });
     });
