@@ -8,3 +8,7 @@ exports.server500s = (err, res, req, next) => {
 exports.server404s = (req, res, next) => {
   res.status(404).send({ msg: 'path not found' });
 };
+
+exports.server405s = (req, res, next) => {
+  res.status(405).send({ msg: 'method not allowed' });
+};
