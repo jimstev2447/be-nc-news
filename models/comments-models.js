@@ -17,10 +17,15 @@ exports.fetchAllCommentsByArticleId = (
   sortByCol = 'created_at',
   order = 'desc'
 ) => {
+  if (order !== 'desc' && order !== 'asc')
+    return Promise.reject({ status: 400, msg: 'bad request' });
   return knex
     .select('comment_id', 'votes', 'created_at', 'author', 'body')
     .from('comments')
     .where({ article_id })
     .returning('*')
-    .orderBy(sortByCol, order);
+    .orderBy(sortByCol, order)
+    .then(data => {
+      return data;
+    });
 };

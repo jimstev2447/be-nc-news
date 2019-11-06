@@ -382,7 +382,58 @@ describe('app', () => {
                   expect(comments).to.be.sortedBy('created_at');
                 });
             });
+            it('status:404 returns path not found for non-existent art_id', () => {
+              return request(app)
+                .get('/api/articles/1234/comments')
+                .expect(404)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal('not found');
+                });
+            });
+            it('status:400 returns bad request for invalid article_id', () => {
+              return request(app)
+                .get('/api/articles/invalidArt_id/comments')
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal('bad request');
+                });
+            });
+            it('status:400 returns bad request for invalid sort query', () => {
+              return request(app)
+                .get('/api/articles/1/comments?sorted_by=Banannas')
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal('bad request');
+                });
+            });
+            it('status:400 returns bad request for invalid order_by query', () => {
+              return request(app)
+                .get('/api/articles/1/comments?order_by=Banannas')
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal('bad request');
+                });
+            });
           });
+          describe('Invalid Methods', () => {
+            it('status:405 returns invalid methd when given an invalid method', () => {
+              const invalidMethods = ['put', 'patch', 'delete'];
+              const methodsToTest = invalidMethods.map(method => {
+                return request(app)
+                  [method]('/api/articles/1/comments')
+                  .expect(405)
+                  .then(({ body: { msg } }) => {
+                    expect(msg).to.equal('method not allowed');
+                  });
+              });
+              return Promise.all(methodsToTest);
+            });
+          });
+        });
+      });
+      describe('GET', () => {
+        it('', () => {
+          //
         });
       });
     });

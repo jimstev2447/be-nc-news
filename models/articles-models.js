@@ -35,3 +35,14 @@ exports.updateArticle = (article_id, votes) => {
         : article;
     });
 };
+
+exports.checkArticleId = article_id => {
+  return knex
+    .select('article_id')
+    .from('articles')
+    .where({ article_id })
+    .returning('*')
+    .then(([data]) => {
+      return !data ? Promise.reject({ status: 404, msg: 'not found' }) : data;
+    });
+};
