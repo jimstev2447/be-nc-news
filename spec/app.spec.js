@@ -255,6 +255,69 @@ describe('app', () => {
                   expect(comment.votes).to.equal(0);
                 });
             });
+            it('status:404 returns path not found for valid but non-existent article_id', () => {
+              const newComment = {
+                username: 'icellusedkars',
+                body: 'new comment'
+              };
+              return request(app)
+                .post('/api/articles/1999/comments')
+                .send(newComment)
+                .expect(404)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal('path not found');
+                });
+            });
+            it('status:400 returns bad request for invalid article_id', () => {
+              const newComment = {
+                username: 'icellusedkars',
+                body: 'new comment'
+              };
+              return request(app)
+                .post('/api/articles/invalidArticleId/comments')
+                .send(newComment)
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal('bad request');
+                });
+            });
+            it('status:400 returns bad request for missing username', () => {
+              const newComment = {
+                body: 'new comment'
+              };
+              return request(app)
+                .post('/api/articles/invalidArticleId/comments')
+                .send(newComment)
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal('bad request');
+                });
+            });
+            it('status:400 returns bad request for missing body', () => {
+              const newComment = {
+                username: 'icellusedkars'
+              };
+              return request(app)
+                .post('/api/articles/1/comments')
+                .send(newComment)
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal('bad request');
+                });
+            });
+            it('status:400 returns bad request for non-existent username', () => {
+              const newComment = {
+                username: 'icellusedkars',
+                body: 'new comment'
+              };
+              return request(app)
+                .post('/api/articles/invalidArticleId/comments')
+                .send(newComment)
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal('bad request');
+                });
+            });
           });
         });
       });

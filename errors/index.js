@@ -5,6 +5,13 @@ exports.psql400s = (err, req, res, next) => {
   } else next(err);
 };
 
+exports.psql404s = (err, req, res, next) => {
+  const codes = ['23503'];
+  if (codes.includes(err.code)) {
+    res.status(404).send({ msg: 'path not found' });
+  } else next(err);
+};
+
 exports.customErrors = (err, req, res, next) => {
   if (err.msg) res.status(err.status).send({ msg: err.msg });
   else next(err);
