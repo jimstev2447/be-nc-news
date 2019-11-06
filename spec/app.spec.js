@@ -215,6 +215,48 @@ describe('app', () => {
             return Promise.all(methodsToTest);
           });
         });
+        describe('/comments', () => {
+          describe('POST', () => {
+            it('status:200 returns comment', () => {
+              const newComment = {
+                username: 'icellusedkars',
+                body: 'new comment'
+              };
+              return request(app)
+                .post('/api/articles/1/comments')
+                .send(newComment)
+                .expect(200)
+                .then(({ body: { comment } }) => {
+                  expect(comment).to.have.keys(
+                    'body',
+                    'created_at',
+                    'comment_id',
+                    'article_id',
+                    'votes',
+                    'author'
+                  );
+                });
+            });
+            it('status:200 returns with correct values', () => {
+              const newComment = {
+                username: 'icellusedkars',
+                body: 'new comment'
+              };
+              return request(app)
+                .post('/api/articles/1/comments')
+                .send(newComment)
+                .expect(200)
+                .then(({ body: { comment } }) => {
+                  expect(comment.body).to.equal('new comment');
+                  expect(comment.article_id).to.equal(1);
+                  expect(comment.author).to.equal('icellusedkars');
+                  expect(comment.created_at).to.not.equal(undefined);
+                  expect(comment.comment_id).to.equal(19);
+                  expect(comment.votes).to.equal(0);
+                });
+            });
+          });
+        });
       });
     });
   });
