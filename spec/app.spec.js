@@ -2,6 +2,7 @@ process.env.NODE_ENV = 'test';
 
 const chai = require('chai');
 const { expect } = chai;
+chai.use(require('chai-sorted'));
 const connection = require('../db/connection.js');
 const request = require('supertest');
 const app = require('../app.js');
@@ -316,6 +317,69 @@ describe('app', () => {
                 .expect(400)
                 .then(({ body: { msg } }) => {
                   expect(msg).to.equal('bad request');
+                });
+            });
+          });
+          describe('GET', () => {
+            it('status:200 returns array of comments with correct art_id', () => {
+              return request(app)
+                .get('/api/articles/1/comments')
+                .expect(200)
+                .then(({ body: { comments } }) => {
+                  expect(comments).to.be.an('array');
+                  expect(comments[0]).to.have.keys(
+                    'comment_id',
+                    'votes',
+                    'created_at',
+                    'author',
+                    'body'
+                  );
+                });
+            });
+            it('status:200 returns with the correct number of comments for that article', () => {
+              return request(app)
+                .get('/api/articles/1/comments')
+                .expect(200)
+                .then(({ body: { comments } }) => {
+                  expect(comments).to.be.length(13);
+                });
+            });
+            it('status:200 returns sorted by created_at desc by default', () => {
+              return request(app)
+                .get('/api/articles/1/comments')
+                .expect(200)
+                .then(({ body: { comments } }) => {
+                  expect(comments).to.be.sortedBy('created_at', {
+                    descending: true
+                  });
+                });
+            });
+            it('status:200 accepts sortBy query and returns correctly', () => {
+              const cols = [
+                'comment_id',
+                'votes',
+                'created_at',
+                'author',
+                'body'
+              ];
+              const sortByProms = cols.map(sortBy => {
+                return request(app)
+                  .get(`/api/articles/1/comments?sorted_by=${sortBy}`)
+                  .expect(200)
+                  .then(({ body: { comments } }) => {
+                    expect(comments).to.be.sortedBy(sortBy, {
+                      descending: true
+                    });
+                  });
+              });
+              return Promise.all(sortByProms);
+            });
+            it('status:200 accepts order_by query accepts asc', () => {
+              return request(app)
+                .get('/api/articles/1/comments?order_by=asc')
+                .expect(200)
+                .then(({ body: { comments } }) => {
+                  expect(comments).to.be.sortedBy('created_at');
                 });
             });
           });
