@@ -83,7 +83,7 @@ describe('app', () => {
       });
     });
     describe('/articles', () => {
-      describe.only('/:article_id', () => {
+      describe('/:article_id', () => {
         describe('GET', () => {
           it('status:200 returns with the specified article', () => {
             return request(app)
@@ -677,7 +677,7 @@ describe('app', () => {
   });
   it('status:404 given an incorrect path', () => {
     return request(app)
-      .get('/api/topicz')
+      .get('/api/articlesx')
       .expect(404)
       .then(({ body: { msg } }) => {
         expect(msg).to.equal('path not found');
