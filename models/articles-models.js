@@ -16,7 +16,7 @@ exports.fetchArticleByArticleId = article_id => {
   return Promise.all([articleReq, commentsCountReq]).then(
     ([article, [{ count }]]) => {
       return !article
-        ? Promise.reject({ status: 404, msg: 'path not found' })
+        ? Promise.reject({ status: 404, msg: 'article not found' })
         : { ...article, comment_count: count };
     }
   );
@@ -31,7 +31,7 @@ exports.updateArticle = (article_id, votes) => {
     .returning('*')
     .then(([article]) => {
       return !article
-        ? Promise.reject({ status: 404, msg: 'path not found' })
+        ? Promise.reject({ status: 404, msg: 'article not found' })
         : article;
     });
 };
@@ -43,7 +43,9 @@ exports.checkArticleId = article_id => {
     .where({ article_id })
     .returning('*')
     .then(([data]) => {
-      return !data ? Promise.reject({ status: 404, msg: 'not found' }) : data;
+      return !data
+        ? Promise.reject({ status: 404, msg: 'article not found' })
+        : data;
     });
 };
 

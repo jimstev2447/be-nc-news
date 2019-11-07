@@ -62,7 +62,7 @@ describe('app', () => {
               .get('/api/users/anyUsername')
               .expect(404)
               .then(({ body: { msg } }) => {
-                expect(msg).to.equal('path not found');
+                expect(msg).to.equal('user not found');
               });
           });
         });
@@ -83,7 +83,7 @@ describe('app', () => {
       });
     });
     describe('/articles', () => {
-      describe('/:article_id', () => {
+      describe.only('/:article_id', () => {
         describe('GET', () => {
           it('status:200 returns with the specified article', () => {
             return request(app)
@@ -111,12 +111,12 @@ describe('app', () => {
                 expect(msg).to.equal('bad request');
               });
           });
-          it('status:404 returns path not found for vaild but non-existent article_id', () => {
+          it('status:404 returns article not found for vaild but non-existent article_id', () => {
             return request(app)
               .get('/api/articles/75')
               .expect(404)
               .then(({ body: { msg } }) => {
-                expect(msg).to.equal('path not found');
+                expect(msg).to.equal('article not found');
               });
           });
         });
@@ -188,7 +188,7 @@ describe('app', () => {
               .send(newVotes)
               .expect(404)
               .then(({ body: { msg } }) => {
-                expect(msg).to.equal('path not found');
+                expect(msg).to.equal('article not found');
               });
           });
           it('status:400 returns bad request if invalid article_id', () => {
@@ -256,7 +256,7 @@ describe('app', () => {
                   expect(comment.votes).to.equal(0);
                 });
             });
-            it('status:404 returns path not found for valid but non-existent article_id', () => {
+            it('status:404 returns not found for valid but non-existent article_id', () => {
               const newComment = {
                 username: 'icellusedkars',
                 body: 'new comment'
@@ -266,7 +266,7 @@ describe('app', () => {
                 .send(newComment)
                 .expect(404)
                 .then(({ body: { msg } }) => {
-                  expect(msg).to.equal('path not found');
+                  expect(msg).to.equal('article not found');
                 });
             });
             it('status:400 returns bad request for invalid article_id', () => {
@@ -387,7 +387,7 @@ describe('app', () => {
                 .get('/api/articles/1234/comments')
                 .expect(404)
                 .then(({ body: { msg } }) => {
-                  expect(msg).to.equal('not found');
+                  expect(msg).to.equal('article not found');
                 });
             });
             it('status:400 returns bad request for invalid article_id', () => {
@@ -431,7 +431,7 @@ describe('app', () => {
           });
         });
       });
-      describe.only('GET', () => {
+      describe('GET', () => {
         it('status:200 returns array of all articles', () => {
           return request(app)
             .get('/api/articles')
@@ -568,6 +568,109 @@ describe('app', () => {
             .then(({ body: { msg } }) => {
               expect(msg).to.equal('topic not found');
             });
+        });
+      });
+    });
+    describe('/comments', () => {
+      describe('/:comment_id', () => {
+        describe('PATCH', () => {
+          it('status:200 returns comment with votes increased', () => {
+            const newVotes = { inc_votes: 1 };
+            return request(app)
+              .patch('/api/comments/1')
+              .send(newVotes)
+              .expect(200)
+              .then(({ body: { comment } }) => {
+                expect(comment.votes).to.equal(17);
+              });
+          });
+          it('status:200 returns comment with votes decreased', () => {
+            const newVotes = { inc_votes: -1 };
+            return request(app)
+              .patch('/api/comments/1')
+              .send(newVotes)
+              .expect(200)
+              .then(({ body: { comment } }) => {
+                expect(comment.votes).to.equal(15);
+              });
+          });
+          it('status:400 returns bad request when given an invalid inc_votes value', () => {
+            const newVotes = { inc_votes: 'test' };
+            return request(app)
+              .patch('/api/comments/1')
+              .send(newVotes)
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal('bad request');
+              });
+          });
+          it('status:400 returns bad request when given an invalid votes key', () => {
+            const newVotes = { test: 1 };
+            return request(app)
+              .patch('/api/comments/1')
+              .send(newVotes)
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal('bad request');
+              });
+          });
+          it('status:404 returns path not found for valid but non-existent', () => {
+            const newVotes = { inc_votes: 1 };
+            return request(app)
+              .patch('/api/comments/10001')
+              .send(newVotes)
+              .expect(404)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal('comment not found');
+              });
+          });
+          it('status:400 returns bad request if invalid article_id', () => {
+            const newVotes = { inc_votes: 1 };
+            return request(app)
+              .patch('/api/comments/incorrect_id')
+              .send(newVotes)
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal('bad request');
+              });
+          });
+        });
+        describe('DELETE', () => {
+          it('status:204 returns no content', () => {
+            return request(app)
+              .delete('/api/comments/1')
+              .expect(204);
+          });
+          it('status:404 returns comment not found for non existend comment', () => {
+            return request(app)
+              .delete('/api/comments/12345')
+              .expect(404)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal('comment not found');
+              });
+          });
+          it('status:400 retuns bad request for invalid comment_id', () => {
+            return request(app)
+              .delete('/api/comments/invalidComment')
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal('bad request');
+              });
+          });
+        });
+        describe('Invalid Methods', () => {
+          it('status:405 returns invalid methd when given an invalid method', () => {
+            const invalidMethods = ['put', 'post'];
+            const methodsToTest = invalidMethods.map(method => {
+              return request(app)
+                [method]('/api/comments/1')
+                .expect(405)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal('method not allowed');
+                });
+            });
+            return Promise.all(methodsToTest);
+          });
         });
       });
     });

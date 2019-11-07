@@ -4,7 +4,12 @@ exports.fetchUserByUsername = username => {
   return knex
     .select('*')
     .from('users')
-    .where({ username });
+    .where({ username })
+    .then(([user]) => {
+      return !user
+        ? Promise.reject({ status: 404, msg: 'user not found' })
+        : user;
+    });
 };
 
 exports.checkUser = ({ author = '' }) => {

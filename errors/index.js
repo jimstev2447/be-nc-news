@@ -8,7 +8,7 @@ exports.psql400s = (err, req, res, next) => {
 exports.psql404s = (err, req, res, next) => {
   const codes = ['23503'];
   if (codes.includes(err.code)) {
-    res.status(404).send({ msg: 'path not found' });
+    res.status(404).send({ msg: 'article not found' });
   } else next(err);
 };
 

@@ -29,3 +29,37 @@ exports.fetchAllCommentsByArticleId = (
       return data;
     });
 };
+
+exports.updateComment = (comment_id, votes) => {
+  if (!votes) return Promise.reject({ status: 400, msg: 'bad request' });
+  return knex
+    .from('comments')
+    .where({ comment_id })
+    .increment('votes', votes)
+    .returning('*')
+    .then(([comment]) => {
+      return !comment
+        ? Promise.reject({ status: 404, msg: 'comment not found' })
+        : comment;
+    });
+};
+
+exports.removeComment = comment_id => {
+  return knex
+    .from('comments')
+    .where({ comment_id })
+    .delete();
+};
+
+exports.checkComment = comment_id => {
+  return knex
+    .select('comment_id')
+    .from('comments')
+    .where({ comment_id })
+    .returning('*')
+    .then(([data]) => {
+      return !data
+        ? Promise.reject({ status: 404, msg: 'comment not found' })
+        : data;
+    });
+};
