@@ -53,9 +53,9 @@ exports.fetchAllArticles = ({
   author,
   topic,
   sort_by = 'created_at',
-  order_by = 'desc'
+  order = 'desc'
 }) => {
-  if (order_by !== 'desc' && order_by !== 'asc')
+  if (order !== 'desc' && order !== 'asc')
     return Promise.reject({ status: 400, msg: 'bad request' });
   return knex
     .select(
@@ -74,5 +74,5 @@ exports.fetchAllArticles = ({
     .count({ comment_count: 'comment_id' })
     .leftJoin('comments', 'articles.article_id', 'comments.article_id')
     .groupBy('articles.article_id')
-    .orderBy(sort_by, order_by);
+    .orderBy(sort_by, order);
 };

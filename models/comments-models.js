@@ -14,7 +14,7 @@ exports.createComment = ({ article_id }, { username, body }) => {
 
 exports.fetchAllCommentsByArticleId = (
   article_id,
-  sortByCol = 'created_at',
+  sort_by = 'created_at',
   order = 'desc'
 ) => {
   if (order !== 'desc' && order !== 'asc')
@@ -24,7 +24,7 @@ exports.fetchAllCommentsByArticleId = (
     .from('comments')
     .where({ article_id })
     .returning('*')
-    .orderBy(sortByCol, order)
+    .orderBy(sort_by, order)
     .then(data => {
       return data;
     });

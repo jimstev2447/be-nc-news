@@ -218,7 +218,7 @@ describe('app', () => {
         });
         describe('/comments', () => {
           describe('POST', () => {
-            it('status:200 returns comment', () => {
+            it('status:201 returns comment', () => {
               const newComment = {
                 username: 'icellusedkars',
                 body: 'new comment'
@@ -226,7 +226,7 @@ describe('app', () => {
               return request(app)
                 .post('/api/articles/1/comments')
                 .send(newComment)
-                .expect(200)
+                .expect(201)
                 .then(({ body: { comment } }) => {
                   expect(comment).to.have.keys(
                     'body',
@@ -238,7 +238,7 @@ describe('app', () => {
                   );
                 });
             });
-            it('status:200 returns with correct values', () => {
+            it('status:201 returns with correct values', () => {
               const newComment = {
                 username: 'icellusedkars',
                 body: 'new comment'
@@ -246,7 +246,7 @@ describe('app', () => {
               return request(app)
                 .post('/api/articles/1/comments')
                 .send(newComment)
-                .expect(200)
+                .expect(201)
                 .then(({ body: { comment } }) => {
                   expect(comment.body).to.equal('new comment');
                   expect(comment.article_id).to.equal(1);
@@ -364,7 +364,7 @@ describe('app', () => {
               ];
               const sortByProms = cols.map(sortBy => {
                 return request(app)
-                  .get(`/api/articles/1/comments?sorted_by=${sortBy}`)
+                  .get(`/api/articles/1/comments?sort_by=${sortBy}`)
                   .expect(200)
                   .then(({ body: { comments } }) => {
                     expect(comments).to.be.sortedBy(sortBy, {
@@ -376,7 +376,7 @@ describe('app', () => {
             });
             it('status:200 accepts order_by query accepts asc', () => {
               return request(app)
-                .get('/api/articles/1/comments?order_by=asc')
+                .get('/api/articles/1/comments?order=asc')
                 .expect(200)
                 .then(({ body: { comments } }) => {
                   expect(comments).to.be.sortedBy('created_at');
@@ -400,7 +400,7 @@ describe('app', () => {
             });
             it('status:400 returns bad request for invalid sort query', () => {
               return request(app)
-                .get('/api/articles/1/comments?sorted_by=Banannas')
+                .get('/api/articles/1/comments?sort_by=Banannas')
                 .expect(400)
                 .then(({ body: { msg } }) => {
                   expect(msg).to.equal('bad request');
@@ -408,7 +408,7 @@ describe('app', () => {
             });
             it('status:400 returns bad request for invalid order_by query', () => {
               return request(app)
-                .get('/api/articles/1/comments?order_by=Banannas')
+                .get('/api/articles/1/comments?order=Banannas')
                 .expect(400)
                 .then(({ body: { msg } }) => {
                   expect(msg).to.equal('bad request');
@@ -469,7 +469,7 @@ describe('app', () => {
         });
         it('status:200 returns ordered ascending as query', () => {
           return request(app)
-            .get('/api/articles?order_by=asc')
+            .get('/api/articles?order=asc')
             .expect(200)
             .then(({ body: { articles } }) => {
               expect(articles).to.be.sortedBy('created_at');
@@ -547,7 +547,7 @@ describe('app', () => {
         });
         it('status:400 returns bad request when given an invalid order_by', () => {
           return request(app)
-            .get('/api/articles?order_by=yesPlease')
+            .get('/api/articles?order=yesPlease')
             .expect(400)
             .then(({ body: { msg } }) => {
               expect(msg).to.equal('bad request');

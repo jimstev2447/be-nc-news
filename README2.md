@@ -1,6 +1,6 @@
 # NC-News-Backend
 
-Backend API for nc-news project, ...
+Backend API for nc-news project ....
 
 ## Getting Started
 
