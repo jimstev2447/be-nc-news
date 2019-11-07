@@ -675,6 +675,30 @@ describe('app', () => {
       });
     });
   });
+  describe('GET', () => {
+    it('returns JSON describing the endpoints', () => {
+      return request(app)
+        .get('/api')
+        .expect(200)
+        .then(({ body: { msg } }) => {
+          expect(msg).to.be.an('object');
+        });
+    });
+  });
+  describe('Invalid Methods', () => {
+    it('status: 405 returns method not allowed when given an invalid method', () => {
+      const invalidMethods = ['put', 'patch', 'delete', 'post'];
+      const promisesToTest = invalidMethods.map(method => {
+        return request(app)
+          [method]('/api')
+          .expect(405)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal('method not allowed');
+          });
+      });
+      return Promise.all(promisesToTest);
+    });
+  });
   it('status:404 given an incorrect path', () => {
     return request(app)
       .get('/api/articlesx')
