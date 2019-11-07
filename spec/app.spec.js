@@ -382,7 +382,7 @@ describe('app', () => {
                   expect(comments).to.be.sortedBy('created_at');
                 });
             });
-            it('status:404 returns path not found for non-existent art_id', () => {
+            it('status:404 returns article not found for non-existent art_id', () => {
               return request(app)
                 .get('/api/articles/1234/comments')
                 .expect(404)
