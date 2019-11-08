@@ -15,8 +15,7 @@ Clone this repo :
 
 you will need to have nmp and node.js installed
 
-`npm install npm -g`
-[https://docs.npmjs.com/downloading-and-installing-node-js-and-npm]
+`npm install npm -g`[link to docs for installing node and nmp](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 
 #### Installing
 
@@ -40,8 +39,6 @@ There are two test scripts
 `npm test` runs the tests for the app which tests all the endpoints and expected behavoiurs
 
 `npm run test-utils` runs tests for the db utils
-
-scripts to run tests for app and utils
 
 ## Hosted Site
 
