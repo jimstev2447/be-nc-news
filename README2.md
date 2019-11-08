@@ -4,13 +4,19 @@ Backend API for nc-news project. This is an article managment data base allowing
 
 ## Getting Started
 
-I think you should use an
-`<addr>` element here instead.
+Clone this repo :
+
+`git clone https://github.com/jimstev2447/be-nc-news.git`
+`cd be-nc-news`
+
+### Setting up the project
 
 ### Prerequisites
 
 you will need to have nmp installed
-npm install
+
+`npm install npm -g`
+[https://docs.npmjs.com/downloading-and-installing-node-js-and-npm]
 
 ### Installing
 
