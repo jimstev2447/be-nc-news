@@ -11,18 +11,35 @@ Clone this repo :
 
 ### Setting up the project
 
-### Prerequisites
+#### Prerequisites
 
-you will need to have nmp installed
+you will need to have nmp and node.js installed
 
 `npm install npm -g`
 [https://docs.npmjs.com/downloading-and-installing-node-js-and-npm]
 
-### Installing
+#### Installing
 
-step by set guide to installing ... ????
+once you have those installed you can install the dependencies required
+`cd` into your repo then,
+`npm install` - this will install the requires dependencies
+
+you will need to make a knex file in order to like to your DB, to do this ...
+
+### Creating Migrating and Seeding
+
+There are scripts to seed and migrate the db, testing will do this for you.
+
+`npm run setup-dbs` - creates the db's
+`npm run seed` - seeds db'd
 
 ## Testing
+
+There are two test scripts
+
+`npm test` runs the tests for the app which tests all the endpoints and expected behavoiurs
+
+`npm run test-utils` runs tests for the db utils
 
 scripts to run tests for app and utils
 
