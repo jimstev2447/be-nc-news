@@ -1,25 +1,18 @@
 const knex = require('../db/connection');
 
 exports.fetchArticleByArticleId = article_id => {
-  const articleReq = knex
-    .select('*')
+  return knex
+    .select('articles.*')
     .from('articles')
-    .where({ article_id })
+    .where('articles.article_id', article_id)
+    .count({ comment_count: 'comment_id' })
+    .leftJoin('comments', 'articles.article_id', 'comments.article_id')
+    .groupBy('articles.article_id')
     .then(([article]) => {
-      return article;
-    });
-  const commentsCountReq = knex
-    .from('comments')
-    .count('*')
-    .where({ article_id });
-
-  return Promise.all([articleReq, commentsCountReq]).then(
-    ([article, [{ count }]]) => {
       return !article
         ? Promise.reject({ status: 404, msg: 'article not found' })
-        : { ...article, comment_count: count };
-    }
-  );
+        : article;
+    });
 };
 
 exports.updateArticle = (article_id, votes) => {

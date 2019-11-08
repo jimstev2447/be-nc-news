@@ -35,9 +35,9 @@ exports.getAllCommentsByArticleId = (req, res, next) => {
 };
 
 exports.patchComment = (req, res, next) => {
-  const comment_id = req.params.comment_id;
-  const votes = req.body.inc_votes;
-  updateComment(comment_id, votes)
+  const { comment_id } = req.params;
+  const { inc_votes } = req.body;
+  updateComment(comment_id, inc_votes)
     .then(comment => {
       res.status(200).send({ comment });
     })
@@ -45,7 +45,7 @@ exports.patchComment = (req, res, next) => {
 };
 
 exports.deleteComment = (req, res, next) => {
-  const comment_id = req.params.comment_id;
+  const { comment_id } = req.params;
   return Promise.all([removeComment(comment_id), checkComment(comment_id)])
     .then(() => {
       res.status(204).send();

@@ -57,7 +57,7 @@ describe('app', () => {
                 });
               });
           });
-          it('status:404 returns path not found for valid but non-existent username', () => {
+          it('status:404 returns user not found for valid but non-existent username', () => {
             return request(app)
               .get('/api/users/anyUsername')
               .expect(404)
@@ -491,7 +491,6 @@ describe('app', () => {
               .expect(200)
               .then(({ body: { articles } }) => {
                 if (sortBy === 'comment_count') {
-                  //coerced comment count to number as returning from db as string
                   const numberedCommentCount = articles.map(article => {
                     const newArticle = { ...article };
                     newArticle.comment_count = Number(newArticle.comment_count);
@@ -558,7 +557,7 @@ describe('app', () => {
             .get('/api/articles?author=testAuthor')
             .expect(404)
             .then(({ body: { msg } }) => {
-              expect(msg).to.equal('author not found');
+              expect(msg).to.equal('user not found');
             });
         });
         it('status:404 returns topic not found when given a non-existent topic', () => {

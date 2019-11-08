@@ -4,11 +4,12 @@ const {
   updateArticle
 } = require('../models/articles-models');
 
-const { checkUser } = require('../models/users-models');
+const { fetchUserByUsername } = require('../models/users-models');
 const { checkTopic } = require('../models/topics-models');
 
 exports.getArticleByArticleId = (req, res, next) => {
-  fetchArticleByArticleId(req.params.article_id)
+  const { article_id } = req.params;
+  fetchArticleByArticleId(article_id)
     .then(article => {
       res.status(200).send({ article });
     })
@@ -16,9 +17,9 @@ exports.getArticleByArticleId = (req, res, next) => {
 };
 
 exports.patchArticleByArticleId = (req, res, next) => {
-  const votes = req.body.inc_votes;
-  const article_id = req.params.article_id;
-  updateArticle(article_id, votes)
+  const { inc_votes } = req.body;
+  const { article_id } = req.params;
+  updateArticle(article_id, inc_votes)
     .then(article => {
       res.status(200).send({ article });
     })
@@ -26,11 +27,12 @@ exports.patchArticleByArticleId = (req, res, next) => {
 };
 
 exports.getAllArticles = (req, res, next) => {
-  const queries = req.query;
+  const username = req.query.author;
+  const { query } = req;
   return Promise.all([
-    fetchAllArticles(queries),
-    checkUser(queries),
-    checkTopic(queries)
+    fetchAllArticles(query),
+    fetchUserByUsername(username),
+    checkTopic(query)
   ])
     .then(([articles]) => {
       res.status(200).send({ articles });

@@ -4,15 +4,14 @@ exports.fetchAllTopics = () => {
   return knex.select('*').from('topics');
 };
 
-exports.checkTopic = ({ topic = '' }) => {
+exports.checkTopic = ({ topic }) => {
   return knex
     .select('slug')
     .from('topics')
-    .where('slug', topic)
-    .returning('*')
+    .modify(query => {
+      if (topic) query.where('slug', topic);
+    })
     .then(([data]) => {
-      if (!topic) return data;
-
       return !data
         ? Promise.reject({ status: 404, msg: 'topic not found' })
         : data;
