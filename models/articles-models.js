@@ -44,9 +44,14 @@ exports.checkArticleId = article_id => {
 exports.fetchAllArticles = ({
   author,
   topic,
+  limit = 10,
+  p = 1,
   sort_by = 'created_at',
   order = 'desc'
 }) => {
+  limit = Number(limit);
+  if (isNaN(limit) || isNaN(p))
+    return Promise.reject({ status: 400, msg: 'bad request' });
   if (order !== 'desc' && order !== 'asc')
     return Promise.reject({ status: 400, msg: 'bad request' });
   return knex
@@ -66,5 +71,7 @@ exports.fetchAllArticles = ({
     .count({ comment_count: 'comment_id' })
     .leftJoin('comments', 'articles.article_id', 'comments.article_id')
     .groupBy('articles.article_id')
-    .orderBy(sort_by, order);
+    .orderBy(sort_by, order)
+    .limit(limit)
+    .offset(p * limit - limit);
 };

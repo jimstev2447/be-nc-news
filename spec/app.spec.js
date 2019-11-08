@@ -431,14 +431,14 @@ describe('app', () => {
           });
         });
       });
-      describe('GET', () => {
+      describe.only('GET', () => {
         it('status:200 returns array of all articles', () => {
           return request(app)
             .get('/api/articles')
             .expect(200)
             .then(({ body: { articles } }) => {
               expect(articles).to.be.an('array');
-              expect(articles).to.have.length(12);
+              expect(articles).to.have.length(10);
             });
         });
         it('status:200 returns articles with expected properties', () => {
@@ -536,6 +536,33 @@ describe('app', () => {
               expect(articles).to.have.length(0);
             });
         });
+        it('status:200 returns n most recent articles when given limit query', () => {
+          return request(app)
+            .get('/api/articles?limit=5')
+            .expect(200)
+            .then(({ body: { articles } }) => {
+              expect(articles).to.have.length(5);
+              expect(articles).to.be.sortedBy('created_at', {
+                descending: true
+              });
+            });
+        });
+        it('status:200 takes a p query which specifies the page at which to start showing articles', () => {
+          return request(app)
+            .get('/api/articles?p=2')
+            .expect(200)
+            .then(({ body: { articles } }) => {
+              expect(articles).to.have.length(2);
+            });
+        });
+        it('status:200 takes a p query which specifies the page at which to start showing articles', () => {
+          return request(app)
+            .get('/api/articles?limit=3&p=3')
+            .expect(200)
+            .then(({ body: { articles } }) => {
+              expect(articles).to.have.length(3);
+            });
+        });
         it('status:400 returns bad request when given an invalid sort col', () => {
           return request(app)
             .get('/api/articles?sort_by=yes')
@@ -566,6 +593,22 @@ describe('app', () => {
             .expect(404)
             .then(({ body: { msg } }) => {
               expect(msg).to.equal('topic not found');
+            });
+        });
+        it('status:400 returns bad request when given invalid limit query', () => {
+          return request(app)
+            .get('/api/articles?limit=burgers')
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal('bad request');
+            });
+        });
+        it('status:400 returns bad request when given bad p query', () => {
+          return request(app)
+            .get('/api/articles?p=sausages')
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal('bad request');
             });
         });
       });
