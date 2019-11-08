@@ -15,8 +15,7 @@ exports.fetchArticleByArticleId = article_id => {
     });
 };
 
-exports.updateArticle = (article_id, votes) => {
-  if (!votes) return Promise.reject({ status: 400, msg: 'bad request' });
+exports.updateArticle = (article_id, votes = 0) => {
   return knex
     .from('articles')
     .where({ article_id })

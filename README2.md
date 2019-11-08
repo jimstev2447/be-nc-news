@@ -1,8 +1,11 @@
 # NC-News-Backend
 
-Backend API for nc-news project ....
+Backend API for nc-news project. This is an article managment data base allowing for users to create articles, comments and search though them.
 
 ## Getting Started
+
+I think you should use an
+`<addr>` element here instead.
 
 ### Prerequisites
 

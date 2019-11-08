@@ -24,8 +24,7 @@ exports.fetchAllCommentsByArticleId = (
     .orderBy(sort_by, order);
 };
 
-exports.updateComment = (comment_id, votes) => {
-  if (!votes) return Promise.reject({ status: 400, msg: 'bad request' });
+exports.updateComment = (comment_id, votes = 0) => {
   return knex
     .from('comments')
     .where({ comment_id })

@@ -161,18 +161,18 @@ describe('app', () => {
                 expect(article.votes).to.equal(90);
               });
           });
-          it('status:400 returns bad request when given an invalid inc_votes value', () => {
-            const newVotes = { inc_votes: 'test' };
+          it('status:200 returns unmodified article when given an invalid votes key', () => {
+            const newVotes = { test: 1 };
             return request(app)
               .patch('/api/articles/1')
               .send(newVotes)
-              .expect(400)
-              .then(({ body: { msg } }) => {
-                expect(msg).to.equal('bad request');
+              .expect(200)
+              .then(({ body: { article } }) => {
+                expect(article.votes).to.equal(100);
               });
           });
-          it('status:400 returns bad request when given an invalid votes key', () => {
-            const newVotes = { test: 1 };
+          it('status:400 returns bad request when given an invalid inc_votes value', () => {
+            const newVotes = { inc_votes: 'test' };
             return request(app)
               .patch('/api/articles/1')
               .send(newVotes)
@@ -593,18 +593,18 @@ describe('app', () => {
                 expect(comment.votes).to.equal(15);
               });
           });
-          it('status:400 returns bad request when given an invalid inc_votes value', () => {
-            const newVotes = { inc_votes: 'test' };
+          it('status:200 returns unmodified comment when given an invalid votes key', () => {
+            const newVotes = { test: 1 };
             return request(app)
               .patch('/api/comments/1')
               .send(newVotes)
-              .expect(400)
-              .then(({ body: { msg } }) => {
-                expect(msg).to.equal('bad request');
+              .expect(200)
+              .then(({ body: { comment } }) => {
+                expect(comment.votes).to.equal(16);
               });
           });
-          it('status:400 returns bad request when given an invalid votes key', () => {
-            const newVotes = { test: 1 };
+          it('status:400 returns bad request when given an invalid inc_votes value', () => {
+            const newVotes = { inc_votes: 'test' };
             return request(app)
               .patch('/api/comments/1')
               .send(newVotes)
