@@ -2,7 +2,8 @@ const {
   fetchAllArticles,
   fetchArticleByArticleId,
   updateArticle,
-  fetchTotalArticles
+  fetchTotalArticles,
+  createArticle
 } = require('../models/articles-models');
 
 const { fetchUserByUsername } = require('../models/users-models');
@@ -38,6 +39,15 @@ exports.getAllArticles = (req, res, next) => {
   ])
     .then(([articles, total_count]) => {
       res.status(200).send({ articles, total_count });
+    })
+    .catch(next);
+};
+
+exports.postArticle = (req, res, next) => {
+  const articleToCreate = req.body;
+  createArticle(articleToCreate)
+    .then(article => {
+      res.status(201).send({ article });
     })
     .catch(next);
 };

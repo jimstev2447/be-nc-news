@@ -4,7 +4,7 @@ app.use(express.json());
 apiRouter = require('./routes/api-router');
 const {
   psql400s,
-  psql404s,
+  psql422s,
   server404s,
   customErrors,
   server500s
@@ -14,7 +14,7 @@ app.use('/api', apiRouter);
 app.use('/*', server404s);
 
 app.use(psql400s);
-app.use(psql404s);
+app.use(psql422s);
 app.use(customErrors);
 app.use(server500s);
 module.exports = app;

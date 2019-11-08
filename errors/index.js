@@ -5,10 +5,10 @@ exports.psql400s = (err, req, res, next) => {
   } else next(err);
 };
 
-exports.psql404s = (err, req, res, next) => {
+exports.psql422s = (err, req, res, next) => {
   const codes = ['23503'];
   if (codes.includes(err.code)) {
-    res.status(404).send({ msg: 'article not found' });
+    res.status(422).send({ msg: 'unprocessable request' });
   } else next(err);
 };
 

@@ -256,7 +256,7 @@ describe('app', () => {
                   expect(comment.votes).to.equal(0);
                 });
             });
-            it('status:404 returns not found for valid but non-existent article_id', () => {
+            it('status:422 returns unprocessable request for valid but non-existent article_id', () => {
               const newComment = {
                 username: 'icellusedkars',
                 body: 'new comment'
@@ -264,9 +264,9 @@ describe('app', () => {
               return request(app)
                 .post('/api/articles/1999/comments')
                 .send(newComment)
-                .expect(404)
+                .expect(422)
                 .then(({ body: { msg } }) => {
-                  expect(msg).to.equal('article not found');
+                  expect(msg).to.equal('unprocessable request');
                 });
             });
             it('status:400 returns bad request for invalid article_id', () => {
@@ -390,7 +390,7 @@ describe('app', () => {
                   expect(comments).to.be.length(5);
                 });
             });
-            it('status: 200 takes a p query which offests the results', () => {
+            it('status:200 takes a p query which offests the results', () => {
               return request(app)
                 .get('/api/articles/1/comments?p=2')
                 .expect(200)
@@ -649,6 +649,71 @@ describe('app', () => {
             .expect(200)
             .then(({ body: { total_count } }) => {
               expect(total_count).to.equal('3');
+            });
+        });
+      });
+      describe('POST', () => {
+        it('status:201 returns new article object', () => {
+          const newArticle = {
+            title: "ain't newspapers brilliant",
+            topic: 'paper',
+            author: 'lurker',
+            body: 'yes this is some words'
+          };
+          return request(app)
+            .post('/api/articles')
+            .send(newArticle)
+            .expect(201)
+            .then(({ body: { article } }) => {
+              expect(article).to.include.keys(
+                'article_id',
+                'votes',
+                'created_at'
+              );
+            });
+        });
+        it('status:400 returns bad request when missing col', () => {
+          const newArticle = {
+            title: "ain't newspapers brilliant",
+            author: 'lurker',
+            body: 'yes this is some words'
+          };
+          return request(app)
+            .post('/api/articles')
+            .send(newArticle)
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal('bad request');
+            });
+        });
+        it('status:422 returns unprocessable request when given non-existent username', () => {
+          const newArticle = {
+            title: "ain't newspapers brilliant",
+            topic: 'paper',
+            author: 'yarp',
+            body: 'yes this is some words'
+          };
+          return request(app)
+            .post('/api/articles')
+            .send(newArticle)
+            .expect(422)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal('unprocessable request');
+            });
+        });
+        it('status:422 returns unprocessable request when given non-existent topic', () => {
+          const newArticle = {
+            title: "ain't newspapers brilliant",
+            topic: 'testtopic',
+            author: 'lurker',
+            body: 'yes this is some words'
+          };
+          return request(app)
+            .post('/api/articles')
+            .send(newArticle)
+            .expect(422)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal('unprocessable request');
             });
         });
       });
