@@ -20,11 +20,10 @@ exports.postCommentByArticleId = (req, res, next) => {
 
 exports.getAllCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
-  const { sort_by } = req.query;
-  const { order } = req.query;
+  const { query } = req;
 
   const promises = [
-    fetchAllCommentsByArticleId(article_id, sort_by, order),
+    fetchAllCommentsByArticleId(article_id, query),
     checkArticleId(article_id)
   ];
   Promise.all(promises)

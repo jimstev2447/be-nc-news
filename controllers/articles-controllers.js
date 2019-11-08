@@ -1,7 +1,8 @@
 const {
   fetchAllArticles,
   fetchArticleByArticleId,
-  updateArticle
+  updateArticle,
+  fetchTotalArticles
 } = require('../models/articles-models');
 
 const { fetchUserByUsername } = require('../models/users-models');
@@ -31,11 +32,12 @@ exports.getAllArticles = (req, res, next) => {
   const { query } = req;
   return Promise.all([
     fetchAllArticles(query),
+    fetchTotalArticles(query),
     fetchUserByUsername(username),
     checkTopic(query)
   ])
-    .then(([articles]) => {
-      res.status(200).send({ articles });
+    .then(([articles, total_count]) => {
+      res.status(200).send({ articles, total_count });
     })
     .catch(next);
 };

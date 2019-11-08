@@ -33,7 +33,6 @@ exports.checkArticleId = article_id => {
     .select('article_id')
     .from('articles')
     .where({ article_id })
-    .returning('*')
     .then(([data]) => {
       return !data
         ? Promise.reject({ status: 404, msg: 'article not found' })
@@ -74,4 +73,17 @@ exports.fetchAllArticles = ({
     .orderBy(sort_by, order)
     .limit(limit)
     .offset(p * limit - limit);
+};
+
+exports.fetchTotalArticles = ({ author, topic }) => {
+  return knex
+    .from('articles')
+    .modify(query => {
+      if (author) query.where({ 'articles.author': author });
+      if (topic) query.where({ topic });
+    })
+    .count({ total_count: 'article_id' })
+    .then(([{ total_count }]) => {
+      return total_count;
+    });
 };

@@ -341,7 +341,7 @@ describe('app', () => {
                 .get('/api/articles/1/comments')
                 .expect(200)
                 .then(({ body: { comments } }) => {
-                  expect(comments).to.be.length(13);
+                  expect(comments).to.be.length(10);
                 });
             });
             it('status:200 returns sorted by created_at desc by default', () => {
@@ -382,6 +382,22 @@ describe('app', () => {
                   expect(comments).to.be.sortedBy('created_at');
                 });
             });
+            it('status:200 accepts limit query', () => {
+              return request(app)
+                .get('/api/articles/1/comments?limit=5')
+                .expect(200)
+                .then(({ body: { comments } }) => {
+                  expect(comments).to.be.length(5);
+                });
+            });
+            it('status: 200 takes a p query which offests the results', () => {
+              return request(app)
+                .get('/api/articles/1/comments?p=2')
+                .expect(200)
+                .then(({ body: { comments } }) => {
+                  expect(comments).to.be.length(3);
+                });
+            });
             it('status:404 returns article not found for non-existent art_id', () => {
               return request(app)
                 .get('/api/articles/1234/comments')
@@ -414,6 +430,22 @@ describe('app', () => {
                   expect(msg).to.equal('bad request');
                 });
             });
+            it('status:400 returns bad request for invalid limit query', () => {
+              return request(app)
+                .get('/api/articles/1/comments?limit=brioche')
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal('bad request');
+                });
+            });
+            it('status:400 returns bad request for invalid p query', () => {
+              return request(app)
+                .get('/api/articles/1/comments?p=panauchocolate')
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal('bad request');
+                });
+            });
           });
           describe('Invalid Methods', () => {
             it('status:405 returns invalid methd when given an invalid method', () => {
@@ -431,7 +463,7 @@ describe('app', () => {
           });
         });
       });
-      describe.only('GET', () => {
+      describe('GET', () => {
         it('status:200 returns array of all articles', () => {
           return request(app)
             .get('/api/articles')
@@ -609,6 +641,14 @@ describe('app', () => {
             .expect(400)
             .then(({ body: { msg } }) => {
               expect(msg).to.equal('bad request');
+            });
+        });
+        it('status:200 returns a total_count proprty with the total number of articles without the page limit', () => {
+          return request(app)
+            .get('/api/articles?author=butter_bridge')
+            .expect(200)
+            .then(({ body: { total_count } }) => {
+              expect(total_count).to.equal('3');
             });
         });
       });

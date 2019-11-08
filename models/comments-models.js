@@ -12,16 +12,19 @@ exports.createComment = ({ article_id }, { username, body }) => {
 
 exports.fetchAllCommentsByArticleId = (
   article_id,
-  sort_by = 'created_at',
-  order = 'desc'
+  { limit = 10, p = 1, sort_by = 'created_at', order = 'desc' }
 ) => {
+  if (isNaN(limit) || isNaN(p))
+    return Promise.reject({ status: 400, msg: 'bad request' });
   if (order !== 'desc' && order !== 'asc')
     return Promise.reject({ status: 400, msg: 'bad request' });
   return knex
     .select('comment_id', 'votes', 'created_at', 'author', 'body')
     .from('comments')
     .where({ article_id })
-    .orderBy(sort_by, order);
+    .orderBy(sort_by, order)
+    .limit(limit)
+    .offset(p * limit - limit);
 };
 
 exports.updateComment = (comment_id, votes = 0) => {
