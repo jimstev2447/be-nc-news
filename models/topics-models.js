@@ -17,3 +17,13 @@ exports.checkTopic = ({ topic }) => {
         : data;
     });
 };
+
+exports.createTopic = ({ slug, description }) => {
+  return knex
+    .insert({ slug, description })
+    .into('topics')
+    .returning('*')
+    .then(([topic]) => {
+      return topic;
+    });
+};

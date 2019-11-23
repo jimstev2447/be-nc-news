@@ -25,6 +25,35 @@ describe('app', () => {
             });
         });
       });
+      describe.only('POST', () => {
+        it('status: 201 returns new topic', () => {
+          const newTopic = {
+            slug: 'underwaterWeaving',
+            description: 'basket making made damp'
+          };
+          return request(app)
+            .post('/api/topics')
+            .send(newTopic)
+            .expect(201)
+            .then(({ body: { topic } }) => {
+              expect(topic.slug).to.equal('underwaterWeaving');
+              expect(topic.description).to.equal('basket making made damp');
+            });
+        });
+
+        it('status: 400 returns bad request when missing a column', () => {
+          const newTopic = {
+            slug: 'underwaterWeaving'
+          };
+          return request(app)
+            .post('/api/topics')
+            .send(newTopic)
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal('bad request');
+            });
+        });
+      });
       describe('Invalid Methods', () => {
         it('status: 405 returns method not allowed when given an invalid method', () => {
           const invalidMethods = ['put', 'patch', 'delete', 'post'];
@@ -202,7 +231,7 @@ describe('app', () => {
               });
           });
         });
-        describe.only('DELETE', () => {
+        describe('DELETE', () => {
           it('Status:204 returns no content', () => {
             return request(app)
               .delete('/api/articles/1')
