@@ -97,3 +97,10 @@ exports.createArticle = ({ title, body, author, topic }) => {
       return article;
     });
 };
+
+exports.removeArticle = article_id => {
+  return knex
+    .from('articles')
+    .where({ article_id })
+    .delete();
+};

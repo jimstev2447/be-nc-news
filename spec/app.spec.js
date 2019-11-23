@@ -202,9 +202,32 @@ describe('app', () => {
               });
           });
         });
+        describe.only('DELETE', () => {
+          it('Status:204 returns no content', () => {
+            return request(app)
+              .delete('/api/articles/1')
+              .expect(204);
+          });
+          it('Status:404 returns article not found if valid but non existent article if', () => {
+            return request(app)
+              .delete('/api/articles/13176')
+              .expect(404)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal('article not found');
+              });
+          });
+          it('Status: 400 returns bad request for invalid article id', () => {
+            return request(app)
+              .delete('/api/articles/invalidArticle')
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal('bad request');
+              });
+          });
+        });
         describe('Invalid Methods', () => {
           it('status:405 returns invalid methd when given an invalid method', () => {
-            const invalidMethods = ['put', 'post', 'delete'];
+            const invalidMethods = ['put', 'post'];
             const methodsToTest = invalidMethods.map(method => {
               return request(app)
                 [method]('/api/articles/1')

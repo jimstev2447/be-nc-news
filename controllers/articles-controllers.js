@@ -3,7 +3,9 @@ const {
   fetchArticleByArticleId,
   updateArticle,
   fetchTotalArticles,
-  createArticle
+  createArticle,
+  removeArticle,
+  checkArticleId
 } = require('../models/articles-models');
 
 const { fetchUserByUsername } = require('../models/users-models');
@@ -48,6 +50,16 @@ exports.postArticle = (req, res, next) => {
   createArticle(articleToCreate)
     .then(article => {
       res.status(201).send({ article });
+    })
+    .catch(next);
+};
+
+exports.deleteArticleByArticleId = (req, res, next) => {
+  const { article_id } = req.params;
+
+  return Promise.all([removeArticle(article_id), checkArticleId(article_id)])
+    .then(() => {
+      res.status(204).send();
     })
     .catch(next);
 };
