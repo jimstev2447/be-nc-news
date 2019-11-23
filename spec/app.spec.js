@@ -25,7 +25,7 @@ describe('app', () => {
             });
         });
       });
-      describe.only('POST', () => {
+      describe('POST', () => {
         it('status: 201 returns new topic', () => {
           const newTopic = {
             slug: 'underwaterWeaving',
