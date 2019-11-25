@@ -393,11 +393,15 @@ Should accept the following queries:
 
 ```http
 POST /api/articles
-
+-- done
 DELETE /api/articles/:article_id
-
+-- done
 POST /api/topics
+ -- done
 
 POST /api/users
+-- done
 GET /api/users
+
+-- done
 ```

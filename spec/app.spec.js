@@ -56,7 +56,7 @@ describe('app', () => {
       });
       describe('Invalid Methods', () => {
         it('status: 405 returns method not allowed when given an invalid method', () => {
-          const invalidMethods = ['put', 'patch', 'delete', 'post'];
+          const invalidMethods = ['put', 'patch', 'delete'];
           const promisesToTest = invalidMethods.map(method => {
             return request(app)
               [method]('/api/topics')
@@ -70,43 +70,124 @@ describe('app', () => {
       });
     });
     describe('/users', () => {
-      describe('/:username', () => {
-        describe('GET', () => {
-          it('status:200 returns correct user object', () => {
-            return request(app)
-              .get('/api/users/lurker')
-              .expect(200)
-              .then(({ body: { user } }) => {
-                expect(user).to.have.keys('username', 'name', 'avatar_url');
-                expect(user).to.eql({
-                  username: 'lurker',
-                  name: 'do_nothing',
-                  avatar_url:
-                    'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png'
-                });
-              });
-          });
-          it('status:404 returns user not found for valid but non-existent username', () => {
-            return request(app)
-              .get('/api/users/anyUsername')
-              .expect(404)
-              .then(({ body: { msg } }) => {
-                expect(msg).to.equal('user not found');
-              });
-          });
+      describe('POST', () => {
+        it('status: 201 returns new user objet', () => {
+          const newUser = {
+            username: 'testUser01',
+            name: 'Jane Dough',
+            avatar_url: 'www.test.com'
+          };
+          return request(app)
+            .post('/api/users')
+            .send(newUser)
+            .expect(201)
+            .then(({ body: { user } }) => {
+              expect(user).to.have.keys('username', 'name', 'avatar_url');
+            });
+        });
+        it('status:201 returns with correct values', () => {
+          const newUser = {
+            username: 'testUser01',
+            name: 'Jane Dough',
+            avatar_url: 'www.test.com'
+          };
+          return request(app)
+            .post('/api/users')
+            .send(newUser)
+            .expect(201)
+            .then(({ body: { user } }) => {
+              expect(user).to.have.keys('username', 'name', 'avatar_url');
+            });
+        });
+        it('status:400 returns bad request for missing username', () => {
+          const newUser = {
+            name: 'Jane Dough',
+            avatar_url: 'www.test.com'
+          };
+          return request(app)
+            .post('/api/users')
+            .send(newUser)
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal('bad request');
+            });
+        });
+        it('status:400 returns bad request for missing name', () => {
+          const newUser = {
+            username: 'icellusedkars'
+          };
+          return request(app)
+            .post('/api/users')
+            .send(newUser)
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal('bad request');
+            });
+        });
+      });
+      describe('GET', () => {
+        it('status: 200 returns array of users', () => {
+          return request(app)
+            .get('/api/users')
+            .expect(200)
+            .then(({ body: { users } }) => {
+              expect(users).to.be.an('array');
+              expect(users.length).to.eql(4);
+            });
         });
         describe('Invalid methods', () => {
           it('status: 405 returns method not allowed when given an invalid method', () => {
-            const invalidMethods = ['put', 'patch', 'delete', 'post'];
+            const invalidMethods = ['put', 'patch', 'delete'];
             const promisesToTest = invalidMethods.map(method => {
               return request(app)
-                [method]('/api/users/lurker')
+                [method]('/api/users')
                 .expect(405)
                 .then(({ body: { msg } }) => {
                   expect(msg).to.equal('method not allowed');
                 });
             });
             return Promise.all(promisesToTest);
+          });
+        });
+        describe('/:username', () => {
+          describe('GET', () => {
+            it('status:200 returns correct user object', () => {
+              return request(app)
+                .get('/api/users/lurker')
+                .expect(200)
+                .then(({ body: { user } }) => {
+                  expect(user).to.have.keys('username', 'name', 'avatar_url');
+                  expect(user).to.eql({
+                    username: 'lurker',
+                    name: 'do_nothing',
+                    avatar_url:
+                      'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png'
+                  });
+                });
+            });
+            it('status:404 returns user not found for valid but non-existent username', () => {
+              return request(app)
+                .get('/api/users/anyUsername')
+                .expect(404)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal('user not found');
+                });
+            });
+          });
+
+          describe('Invalid methods', () => {
+            it('status: 405 returns method not allowed when given an invalid method', () => {
+              const invalidMethods = ['put', 'patch', 'delete', 'post'];
+              const promisesToTest = invalidMethods.map(method => {
+                return request(app)
+                  [method]('/api/users/lurker')
+                  .expect(405)
+                  .then(({ body: { msg } }) => {
+                    expect(msg).to.equal('method not allowed');
+                  });
+              });
+              return Promise.all(promisesToTest);
+            });
           });
         });
       });
@@ -873,37 +954,37 @@ describe('app', () => {
         });
       });
     });
-  });
-  describe('GET', () => {
-    it('returns JSON describing the endpoints', () => {
-      return request(app)
-        .get('/api')
-        .expect(200)
-        .then(({ body: { msg } }) => {
-          expect(msg).to.be.an('object');
-        });
-    });
-  });
-  describe('Invalid Methods', () => {
-    it('status: 405 returns method not allowed when given an invalid method', () => {
-      const invalidMethods = ['put', 'patch', 'delete', 'post'];
-      const promisesToTest = invalidMethods.map(method => {
+    describe('GET', () => {
+      it('returns JSON describing the endpoints', () => {
         return request(app)
-          [method]('/api')
-          .expect(405)
+          .get('/api')
+          .expect(200)
           .then(({ body: { msg } }) => {
-            expect(msg).to.equal('method not allowed');
+            expect(msg).to.be.an('object');
           });
       });
-      return Promise.all(promisesToTest);
     });
-  });
-  it('status:404 given an incorrect path', () => {
-    return request(app)
-      .get('/api/articlesx')
-      .expect(404)
-      .then(({ body: { msg } }) => {
-        expect(msg).to.equal('path not found');
+    describe('Invalid Methods', () => {
+      it('status: 405 returns method not allowed when given an invalid method', () => {
+        const invalidMethods = ['put', 'patch', 'delete', 'post'];
+        const promisesToTest = invalidMethods.map(method => {
+          return request(app)
+            [method]('/api')
+            .expect(405)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal('method not allowed');
+            });
+        });
+        return Promise.all(promisesToTest);
       });
+    });
+    it('status:404 given an incorrect path', () => {
+      return request(app)
+        .get('/api/articlesx')
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).to.equal('path not found');
+        });
+    });
   });
 });
