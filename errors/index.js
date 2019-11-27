@@ -13,7 +13,8 @@ exports.psql422s = (err, req, res, next) => {
 };
 
 exports.customErrors = (err, req, res, next) => {
-  if (err.msg) res.status(err.status).send({ msg: err.msg });
+  if (err.msg)
+    res.status(err.status).send({ status: err.status, msg: err.msg });
   else next(err);
 };
 
